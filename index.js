@@ -1,8 +1,17 @@
 const grid = document.querySelector(".grid");
 const blockWidth = 100;
 const blockHeight = 20;
+const boardWidth = 560;
+const ballDiameter = 20;
+let xDirection = 2;
+let yDirection = 2;
+let timerId;
+
 const userStart = [230, 10];
 let currentPosition = userStart;
+
+const ballStart = [270, 35];
+let ballCurrentPosition = ballStart;
 
 //create Block class
 class Block {
@@ -50,16 +59,69 @@ addBlocks();
 
 const user = document.createElement("div");
 user.classList.add("user");
-user.style.left = currentPosition[0] + "px";
-user.style.bottom = currentPosition[1] + "px";
+drawUser();
 grid.appendChild(user);
 
-//move user
+//draw user
+function drawUser() {
+  user.style.left = currentPosition[0] + "px";
+  user.style.bottom = currentPosition[1] + "px";
+}
 
+function drawBall() {
+  ball.style.left = ballCurrentPosition[0] + "px";
+  ball.style.bottom = ballCurrentPosition[1] + "px";
+}
+
+//move user
 function moveUser(e) {
   switch (e.key) {
     case "ArrowLeft":
-      currentPosition[0] -= 10;
-      user.style.left = currentPosition[0] + "px";
+      if (currentPosition[0] > 0) {
+        currentPosition[0] -= 10;
+        drawUser();
+      }
+      break;
+    case "ArrowRight":
+      if (currentPosition[0] < boardWidth - blockWidth) {
+        currentPosition[0] += 10;
+        drawUser();
+      }
+      break;
+  }
+}
+
+document.addEventListener("keydown", moveUser);
+
+//add ball
+const ball = document.createElement("div");
+ball.classList.add("ball");
+drawBall();
+grid.appendChild(ball);
+
+//move the ball
+
+function moveBall() {
+  ballCurrentPosition[0] += xDirection;
+  ballCurrentPosition[1] += yDirection;
+  drawBall();
+  checkCollision();
+}
+
+timerId = setInterval(moveBall, 30);
+
+//check for collisions
+
+function checkCollision() {
+  //check for walls
+  if (ballCurrentPosition[0] >= boardWidth - ballDiameter) {
+    changeDirection();
+  }
+}
+
+function changeDirection() {
+  if (xDirection === 2 && yDirection === 2) {
+    yDirection = -2;
+    return;
   }
 }
