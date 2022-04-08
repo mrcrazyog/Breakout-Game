@@ -2,10 +2,13 @@ const grid = document.querySelector(".grid");
 const blockWidth = 100;
 const blockHeight = 20;
 const boardWidth = 560;
+const boardHeight = 300;
 const ballDiameter = 20;
+const scoreDisplay = document.querySelector("#score");
 let xDirection = 2;
 let yDirection = 2;
 let timerId;
+let score = 0;
 
 const userStart = [230, 10];
 let currentPosition = userStart;
@@ -54,6 +57,9 @@ const addBlocks = () => {
 };
 
 addBlocks();
+// const addButton = document.createElement("button");
+// addButton.textContent = "test";
+// document.body.appendChild(addButton);
 
 //add user
 
@@ -113,15 +119,82 @@ timerId = setInterval(moveBall, 30);
 //check for collisions
 
 function checkCollision() {
+  //check for block collision
+  for (let i = 0; i < blocks.length; i++) {
+    if (
+      ballCurrentPosition[0] > blocks[i].bottomLeft[0] &&
+      ballCurrentPosition[0] < blocks[i].bottomRight[0] &&
+      ballCurrentPosition[1] + ballDiameter > blocks[i].bottomLeft[1] &&
+      ballCurrentPosition[1] < blocks[i].topLeft[1]
+    ) {
+      const allBlocks = Array.from(document.querySelectorAll(".block"));
+      allBlocks[i].classList.remove("block");
+      blocks.splice(i, 1);
+      changeDirection();
+      score++;
+      scoreDisplay.textContent = score;
+
+      //check for a win
+
+      if (blocks.length === 0) {
+        scoreDisplay.textContent = "You win!";
+        scoreDisplay.style.color = "green";
+        scoreDisplay.style.textTransform = "uppercase";
+        scoreDisplay.style.fontWeight = "800";
+        clearInterval(timerId);
+        document.removeEventListener("keydown", moveUser);
+      }
+    }
+  }
+
   //check for walls
-  if (ballCurrentPosition[0] >= boardWidth - ballDiameter) {
+  if (
+    ballCurrentPosition[0] >= boardWidth - ballDiameter ||
+    ballCurrentPosition[1] >= boardHeight - ballDiameter ||
+    ballCurrentPosition[0] <= 0
+  ) {
     changeDirection();
+  }
+
+  //user collision
+  if (
+    ballCurrentPosition[0] > currentPosition[0] &&
+    ballCurrentPosition[0] < currentPosition[0] + blockWidth &&
+    ballCurrentPosition[1] > currentPosition[1] &&
+    ballCurrentPosition[1] < currentPosition[1] + blockHeight
+  ) {
+    changeDirection();
+  }
+
+  //game over
+
+  if (ballCurrentPosition[1] <= 0) {
+    clearInterval(timerId);
+    scoreDisplay.textContent = "Game Over!";
+    scoreDisplay.style.color = "red";
+    scoreDisplay.style.fontWeight = "800";
+    document.removeEventListener("keydown", moveUser);
   }
 }
 
 function changeDirection() {
   if (xDirection === 2 && yDirection === 2) {
     yDirection = -2;
+    return;
+  }
+
+  if (xDirection === 2 && yDirection === -2) {
+    xDirection = -2;
+    return;
+  }
+
+  if (xDirection === -2 && yDirection === -2) {
+    yDirection = 2;
+    return;
+  }
+
+  if (xDirection === -2 && yDirection === 2) {
+    xDirection = 2;
     return;
   }
 }
