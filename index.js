@@ -4,6 +4,7 @@ const blockHeight = 20;
 const boardWidth = 560;
 const boardHeight = 300;
 const ballDiameter = 20;
+const scoreTitle = document.querySelector("#score-title");
 const scoreDisplay = document.querySelector("#score");
 let xDirection = 2;
 let yDirection = 2;
@@ -57,9 +58,13 @@ const addBlocks = () => {
 };
 
 addBlocks();
-const addButton = document.createElement("button");
-addButton.textContent = "test";
-grid.appendChild(addButton);
+
+//add starting button
+const startButton = document.createElement("button");
+startButton.classList.add("button");
+startButton.textContent = "Start the game!";
+document.body.insertBefore(startButton, scoreTitle);
+startButton.onclick = startGame;
 
 //add user
 
@@ -97,8 +102,6 @@ function moveUser(e) {
   }
 }
 
-document.addEventListener("keydown", moveUser);
-
 //add ball
 const ball = document.createElement("div");
 ball.classList.add("ball");
@@ -114,7 +117,20 @@ function moveBall() {
   checkCollision();
 }
 
-timerId = setInterval(moveBall, 30);
+function startBall() {
+  timerId = setInterval(moveBall, 30);
+}
+
+//add event listeners
+function addEventListeners() {
+  document.addEventListener("keydown", moveUser);
+}
+
+//start the game
+function startGame() {
+  startBall();
+  addEventListeners();
+}
 
 //check for collisions
 
