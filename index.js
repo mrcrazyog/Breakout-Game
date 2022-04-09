@@ -57,9 +57,9 @@ const addBlocks = () => {
 };
 
 addBlocks();
-// const addButton = document.createElement("button");
-// addButton.textContent = "test";
-// document.body.appendChild(addButton);
+const addButton = document.createElement("button");
+addButton.textContent = "test";
+grid.appendChild(addButton);
 
 //add user
 
